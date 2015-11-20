@@ -94,6 +94,7 @@ public class Ambience {
 				thread.setGain(PlayerThread.fadeGains[0]);
 				silenceTicks = 0;
 				fadeOutTicks = 0;
+				waitTick = WAIT_DURATION;
 			}
 			
 			if(thread != null)

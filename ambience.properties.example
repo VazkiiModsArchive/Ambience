@@ -1,0 +1,68 @@
+# Ambience Config
+
+enabled=true
+
+# === Events - Highest Priority
+# Any non covered events will be ignored
+# e.g. If you don't want a "high up" song, don't include event.highUp
+
+event.mainMenu=ScapeTheme
+event.boss=AttackII
+event.underground=ScapeCave
+event.deepUnderground=CaveBackground
+event.highUp=MilesAway
+event.village=TheTradeParade
+event.underwater=Zealot
+event.minecart=DwarfTheme
+event.boat=SeaShantyII
+event.horse=FluteSalad
+event.pig=GoblinVillage
+event.night=Nightfall
+event.rain=Quest
+event.dying=Forbidden
+event.fishing=SeaShantyI
+event.pumpkinHead=DanceOfDeath
+event.generic=AutumnVoyage
+
+# === Events End
+
+# === Specific Biomes - High Priority
+# Biomes names have spaces replaced with +
+
+biome.Sunflower+Plains=Parade
+biome.Flower+Forest=Parade
+biome.Roofed+Forest=Start
+biome.Deep+Ocean=LongWayHome
+
+# === Specific Biomes End
+
+# === Biome Tags - Medium/Low Priority
+# These make use of the forge biome dictionary
+# Casing is ignored
+# There's primary and secondary tags. All primary tags will get checked before the secondary ones
+# https://github.com/MinecraftForge/MinecraftForge/blob/master/src/main/java/net/minecraftforge/common/BiomeDictionary.java
+
+# Medium priority
+primarytag.spooky=UnknownLand
+primarytag.dead=Spooky
+primarytag.lush=Expanse
+primarytag.nether=Moody
+primarytag.end=Wonder
+primarytag.mushroom=Wander
+primarytag.magical=Vision
+primarytag.ocean=NewbieMelody
+primarytag.river=Greatness
+
+# Low
+secondarytag.mesa=Barbarianism
+secondarytag.forest=Dream
+secondarytag.plains=Harmony
+secondarytag.moutain=Adventure
+secondarytag.hills=Medieval
+secondarytag.swamp=Yesteryear
+secondarytag.sandy=AlKharid
+secondarytag.snowy=Starlight
+secondarytag.wasteland=Forever
+secondarytag.beach=Attention
+
+# === Biome Tags End
