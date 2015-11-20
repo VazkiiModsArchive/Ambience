@@ -1,4 +1,4 @@
-package vazkii.runetune;
+package vazkii.ambience;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,10 +32,10 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 
-@Mod(modid = RuneTune.MOD_ID, name = RuneTune.MOD_NAME, version = RuneTune.VERSION, dependencies = RuneTune.DEPENDENCIES)
-public class RuneTune {
+@Mod(modid = Ambience.MOD_ID, name = Ambience.MOD_NAME, version = Ambience.VERSION, dependencies = Ambience.DEPENDENCIES)
+public class Ambience {
 
-	public static final String MOD_ID = "RuneTune";
+	public static final String MOD_ID = "Ambience";
 	public static final String MOD_NAME = MOD_ID;
 	public static final String BUILD = "GRADLE:BUILD";
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;

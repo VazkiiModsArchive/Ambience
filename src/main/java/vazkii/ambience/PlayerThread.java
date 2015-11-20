@@ -1,4 +1,4 @@
-package vazkii.runetune;
+package vazkii.ambience;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -23,8 +23,8 @@ public class PlayerThread extends Thread {
 	public static float[] fadeGains;
 	
 	static {
-		fadeGains = new float[RuneTune.FADE_DURATION];
-		float diff = MED_GAIN / RuneTune.FADE_DURATION;
+		fadeGains = new float[Ambience.FADE_DURATION];
+		float diff = MED_GAIN / Ambience.FADE_DURATION;
 		for(int i = 0; i < fadeGains.length; i++)
 			fadeGains[i] = MED_GAIN + diff * i;
 	}
@@ -74,7 +74,7 @@ public class PlayerThread extends Thread {
 	}
 
 	public InputStream getStream() {
-		return RuneTune.class.getResourceAsStream("/assets/runetune/music/" + currentSong + ".mp3");
+		return Ambience.class.getResourceAsStream("/assets/runetune/music/" + currentSong + ".mp3");
 	}
 	
 	public void next() {
