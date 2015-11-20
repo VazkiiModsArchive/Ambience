@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.settings.GameSettings;
@@ -54,7 +57,8 @@ public class PlayerThread extends Thread {
 				if(queued && currentSong != null) {
 					if(player != null)
 						resetPlayer();
-					player = new AdvancedPlayer(getStream());
+					InputStream stream = SongLoader.getStream();
+					player = new AdvancedPlayer(stream);
 					queued = false;
 				}
 
@@ -73,10 +77,6 @@ public class PlayerThread extends Thread {
 		}
 	}
 
-	public InputStream getStream() {
-		return Ambience.class.getResourceAsStream("/assets/runetune/music/" + currentSong + ".mp3");
-	}
-	
 	public void next() {
 		play(currentSong);
 	}
