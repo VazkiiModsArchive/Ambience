@@ -64,7 +64,7 @@ public class PlayerThread extends Thread {
 
 				boolean played = false;
 				if(player != null && player.getAudioDevice() != null && realGain > MIN_GAIN) {
-					setGain(fadeGains[Ambience.FADE_DURATION - 1]);
+					setGain(fadeGains[0]);
 					player.play();
 					playing = true;
 					played = true;
@@ -112,10 +112,11 @@ public class PlayerThread extends Thread {
 	}
 	
 	public void setGain(float gain) {
+		this.gain = Math.min(MAX_GAIN, Math.max(MIN_GAIN, gain));
+
 		if(player == null)
 			return;
 		
-		this.gain = Math.min(MAX_GAIN, Math.max(MIN_GAIN, gain));
 		setRealGain();
 	}
 	

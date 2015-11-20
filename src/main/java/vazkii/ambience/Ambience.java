@@ -27,7 +27,7 @@ public class Ambience {
 	public static final String DEPENDENCIES = "";
 
 	private static final int WAIT_DURATION = 40;
-	public static final int FADE_DURATION = 20;
+	public static final int FADE_DURATION = 40;
 	public static final int SILENCE_DURATION = 20;
 
 	public static PlayerThread thread;
@@ -71,36 +71,29 @@ public class Ambience {
 			if((song == null && PlayerThread.currentSong != null) || (song != null && !song.equals(PlayerThread.currentSong))) {
 				if(nextSong != null && nextSong.equals(song))
 					waitTick--;
-				else waitTick = WAIT_DURATION;
 				nextSong = song;
 				
 				if(waitTick <= 0) {
 					if(fadeOutTicks < FADE_DURATION) {
-						System.out.println("fadeout " + PlayerThread.fadeGains[fadeOutTicks]);
 						thread.setGain(PlayerThread.fadeGains[fadeOutTicks]);
 						fadeOutTicks++;
+						silenceTicks = 0;
 					} else {
 						nextSong = null;
-						thread.setGain(PlayerThread.fadeGains[FADE_DURATION]);
-						changeSongTo(song);
-//						fadeInTicks = 0;
-						silenceTicks = 0;
+						if(silenceTicks < SILENCE_DURATION) {
+							silenceTicks++;
+						} else {
+							changeSongTo(song);
+							fadeOutTicks = 0;
+							waitTick = WAIT_DURATION;
+						}
 					}
 				}
-					
 			} else {
 				nextSong = null;
-				
-//				if(fadeInTicks < FADE_DURATION) {
-//					System.out.println("fadein " + PlayerThread.fadeGains[FADE_DURATION - 1 - fadeInTicks]);
-//					thread.setGain(PlayerThread.fadeGains[FADE_DURATION - 1 - fadeInTicks]);
-//					if(silenceTicks < SILENCE_DURATION) {
-//						System.out.println("silence " + silenceTicks);
-//						silenceTicks++;
-//					} else fadeInTicks++;
-//					
-//					fadeOutTicks = 0;
-//				}
+				thread.setGain(PlayerThread.fadeGains[0]);
+				silenceTicks = 0;
+				fadeOutTicks = 0;
 			}
 			
 			if(thread != null)
