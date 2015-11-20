@@ -19,20 +19,20 @@ import javazoom.jl.player.advanced.PlaybackListener;
 
 public class PlayerThread extends Thread {
 
-	public static final float MIN_GAIN = -20F;
-	public static final float MAX_GAIN = 0F;
-	public static final float MED_GAIN = (MAX_GAIN - MIN_GAIN) / 2 * (Math.abs(MIN_GAIN) / MIN_GAIN);
+	public static final float MIN_GAIN = -80F;
+	public static final float MAX_GAIN = -10F;
 
 	public static float[] fadeGains;
 	
 	static {
 		fadeGains = new float[Ambience.FADE_DURATION];
-		float diff = MED_GAIN / Ambience.FADE_DURATION;
+		float totaldiff = MIN_GAIN - MAX_GAIN;
+		float diff = totaldiff / fadeGains.length;
 		for(int i = 0; i < fadeGains.length; i++)
-			fadeGains[i] = MED_GAIN + diff * i;
+			fadeGains[i] = MAX_GAIN + diff * i;
 	}
 	
-	public volatile static float gain = MED_GAIN;
+	public volatile static float gain = MAX_GAIN;
 	public volatile static float realGain = 0;
 
 	public volatile static String currentSong = null;
@@ -64,6 +64,7 @@ public class PlayerThread extends Thread {
 
 				boolean played = false;
 				if(player != null && player.getAudioDevice() != null && realGain > MIN_GAIN) {
+					setGain(fadeGains[Ambience.FADE_DURATION - 1]);
 					player.play();
 					playing = true;
 					played = true;
@@ -120,18 +121,17 @@ public class PlayerThread extends Thread {
 	
 	public void setRealGain() {
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
-		float realGain = Math.max(MIN_GAIN, gain * (2F - settings.getSoundLevel(SoundCategory.MUSIC) * settings.getSoundLevel(SoundCategory.MASTER))); 
-		if(realGain != this.realGain) {
-			this.realGain = realGain;
-			if(player != null) {
-				AudioDevice device = player.getAudioDevice();
-				if(device != null && device instanceof JavaSoundAudioDevice)
-					((JavaSoundAudioDevice) device).setGain(realGain);
-			}
-			
-			if(realGain == MIN_GAIN)
-				play(null);
+		float musicGain = settings.getSoundLevel(SoundCategory.MUSIC) * settings.getSoundLevel(SoundCategory.MASTER);
+		float realGain = Math.max(MIN_GAIN, gain * (2F - musicGain)); 
+		this.realGain = realGain;
+		if(player != null) {
+			AudioDevice device = player.getAudioDevice();
+			if(device != null && device instanceof JavaSoundAudioDevice)
+				((JavaSoundAudioDevice) device).setGain(realGain);
 		}
+		
+		if(musicGain == 0)
+			play(null);
 	}
 	
 	public float getRelativeVolume() {

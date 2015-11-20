@@ -3,7 +3,6 @@ package vazkii.ambience;
 import java.io.File;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -11,6 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -26,16 +26,17 @@ public class Ambience {
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
 	public static final String DEPENDENCIES = "";
 
-	
 	private static final int WAIT_DURATION = 40;
 	public static final int FADE_DURATION = 20;
+	public static final int SILENCE_DURATION = 20;
 
 	public static PlayerThread thread;
 	
 	String nextSong;
-	int waitTick = 0;
-	int fadeOutTicks = 0;
+	int waitTick = WAIT_DURATION;
+	int fadeOutTicks = FADE_DURATION;
 	int fadeInTicks = 0;
+	int silenceTicks = 0;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -51,6 +52,13 @@ public class Ambience {
 		
 		if(SongLoader.enabled)
 			thread = new PlayerThread();
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event) {
+		Minecraft mc = Minecraft.getMinecraft();
+		MusicTicker ticker = new NilMusicTicker(mc);
+		ReflectionHelper.setPrivateValue(Minecraft.class, mc, ticker, "mcMusicTicker", "field_147126_aw", "ax");
 	}
 	
 	@SubscribeEvent
@@ -68,31 +76,33 @@ public class Ambience {
 				
 				if(waitTick <= 0) {
 					if(fadeOutTicks < FADE_DURATION) {
+						System.out.println("fadeout " + PlayerThread.fadeGains[fadeOutTicks]);
 						thread.setGain(PlayerThread.fadeGains[fadeOutTicks]);
 						fadeOutTicks++;
 					} else {
 						nextSong = null;
-						changeSongTo(song);	
-						fadeInTicks = 0;
+						thread.setGain(PlayerThread.fadeGains[FADE_DURATION]);
+						changeSongTo(song);
+//						fadeInTicks = 0;
+						silenceTicks = 0;
 					}
 				}
 					
 			} else {
 				nextSong = null;
-				if(fadeInTicks < FADE_DURATION) {
-					thread.setGain(PlayerThread.fadeGains[FADE_DURATION - 1 - fadeInTicks]);
-					fadeInTicks++;
-					fadeOutTicks = 0;
-				}
+				
+//				if(fadeInTicks < FADE_DURATION) {
+//					System.out.println("fadein " + PlayerThread.fadeGains[FADE_DURATION - 1 - fadeInTicks]);
+//					thread.setGain(PlayerThread.fadeGains[FADE_DURATION - 1 - fadeInTicks]);
+//					if(silenceTicks < SILENCE_DURATION) {
+//						System.out.println("silence " + silenceTicks);
+//						silenceTicks++;
+//					} else fadeInTicks++;
+//					
+//					fadeOutTicks = 0;
+//				}
 			}
 			
-			Minecraft mc = Minecraft.getMinecraft();
-			MusicTicker ticker = ReflectionHelper.getPrivateValue(Minecraft.class, mc, new String[] { "mcMusicTicker", "field_147126_aw", "ax" });
-			if(ticker != null) {
-				ISound sound = ReflectionHelper.getPrivateValue(MusicTicker.class, ticker, new String[] { "currentMusic", "field_147678_c", "c" });
-				if(sound != null)
-					mc.getSoundHandler().stopSound(sound);
-			}
 			if(thread != null)
 				thread.setRealGain();
 		}
