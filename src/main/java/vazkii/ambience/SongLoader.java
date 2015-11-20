@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
 
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.BiomeDictionary;
+
 import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.FMLLog;
@@ -36,11 +39,32 @@ public final class SongLoader {
 				for(Object obj : keys) {
 					String s = (String) obj;
 					
-					String[] tokens = s.split(".");
-					if(tokens.length >= 2) {
+					String[] tokens = s.split("\\.");
+					if(tokens.length < 2)
+						continue;
+
+					String keyType = tokens[0];
+					if(keyType.equals("event")) {
+						String event = tokens[1];
 						
+						SongPicker.eventMap.put(event, props.getProperty(s));
+					} else if(keyType.equals("biome")) {
+						String biomeName = joinTokensExceptFirst(tokens).replaceAll("\\+", " ");
+						BiomeGenBase biome = BiomeMapper.getBiome(biomeName);
+						
+						if(biome != null)
+							SongPicker.biomeMap.put(biome, props.getProperty(s));
+					} else if(keyType.matches("primarytag|secondarytag")) {
+						boolean primary = keyType.equals("primarytag");
+						String tagName = tokens[1].toUpperCase();
+						BiomeDictionary.Type type = BiomeMapper.getBiomeType(tagName);
+						
+						if(type != null) {
+							if(primary)
+								SongPicker.primaryTagMap.put(type, props.getProperty(s));
+							else SongPicker.secondaryTagMap.put(type, props.getProperty(s));
+						}
 					}
-					String keyType = s.
 				}
 			}
 		} catch(Exception e) {
@@ -75,5 +99,17 @@ public final class SongLoader {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private static String joinTokensExceptFirst(String[] tokens) {
+		String s = "";
+		int i = 0;
+		for(String token : tokens) {
+			i++;
+			if(i == 1)
+				continue;
+			s += token;
+		}
+		return s;
 	}
 }

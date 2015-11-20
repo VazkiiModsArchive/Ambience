@@ -77,7 +77,8 @@ public final class SongPicker {
 			else if(y < 50)
 				return getSongForEvent(EVENT_UNDERGROUND);
 		
-		if(!world.provider.isDaytime())
+		long time = world.getWorldTime() % 24000;
+		if(time > 13600)
 			return getSongForEvent(EVENT_NIGHT);
 		
         if(world != null && world.blockExists(x, y, z)) {
@@ -104,6 +105,7 @@ public final class SongPicker {
 		
 		if(event.equals(EVENT_GENERIC))
 			return null;
+		System.out.println("Missing event " + event);
 		
 		return getSongForEvent(EVENT_GENERIC);
 	}
