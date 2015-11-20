@@ -55,31 +55,61 @@ public final class SongPicker {
 		int y = MathHelper.floor_double(player.posY);
 		int z = MathHelper.floor_double(player.posZ);
 
-        if(BossStatus.bossName != null && BossStatus.statusBarTime > 0)
-        	return getSongForEvent(EVENT_BOSS);
+        if(BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
+        	String song = getSongForEvent(EVENT_BOSS);
+        	if(song != null)
+        		return song;
+        }
         	
 		Entity riding = player.ridingEntity;
-		if(riding != null)
-			if(riding instanceof EntityMinecart)
-				return getSongForEvent(EVENT_MINECART);
-			else if(riding instanceof EntityBoat)
-				return getSongForEvent(EVENT_BOAT);
-			else if(riding instanceof EntityHorse)
-				return getSongForEvent(EVENT_HORSE);
-			else if(riding instanceof EntityPig)
-				return getSongForEvent(EVENT_PIG);
+		if(riding != null) {
+			if(riding instanceof EntityMinecart) {
+	        	String song = getSongForEvent(EVENT_MINECART);
+	        	if(song != null)
+	        		return song;
+	        } 
+			if(riding instanceof EntityBoat) {
+	        	String song = getSongForEvent(EVENT_BOAT);
+	        	if(song != null)
+	        		return song;
+	        } 
+			if(riding instanceof EntityHorse) {
+	        	String song = getSongForEvent(EVENT_HORSE);
+	        	if(song != null)
+	        		return song;
+	        } 
+			if(riding instanceof EntityPig) {
+	        	String song = getSongForEvent(EVENT_PIG);
+	        	if(song != null)
+	        		return song;
+	        }
+		}
 		
-		if(y > 128)
-			return getSongForEvent(EVENT_HIGH_UP);
-		else if(!world.canBlockSeeTheSky(x, y, z))
-			if(y < 20)
-				return getSongForEvent(EVENT_DEEP_UNDEGROUND);
-			else if(y < 50)
-				return getSongForEvent(EVENT_UNDERGROUND);
+		if(y > 128) {
+        	String song = getSongForEvent(EVENT_HIGH_UP);
+        	if(song != null)
+        		return song;
+        }
+		
+		if(!world.canBlockSeeTheSky(x, y, z)) {
+			if(y < 20) {
+	        	String song = getSongForEvent(EVENT_DEEP_UNDEGROUND);
+	        	if(song != null)
+	        		return song;
+	        }
+			if(y < 50) {
+	        	String song = getSongForEvent(EVENT_UNDERGROUND);
+	        	if(song != null)
+	        		return song;
+	        }
+		}
 		
 		long time = world.getWorldTime() % 24000;
-		if(time > 13600)
-			return getSongForEvent(EVENT_NIGHT);
+		if(time > 13600) {
+        	String song = getSongForEvent(EVENT_NIGHT);
+        	if(song != null)
+        		return song;
+        }
 		
         if(world != null && world.blockExists(x, y, z)) {
             Chunk chunk = world.getChunkFromBlockCoords(x, z);
@@ -103,11 +133,11 @@ public final class SongPicker {
 		if(eventMap.containsKey(event))
 			return eventMap.get(event);
 		
-		if(event.equals(EVENT_GENERIC))
-			return null;
-		System.out.println("Missing event " + event);
+		return null;
+	}
+	
+	public static void getSongForBiome(World world, int x, int y, int z) {
 		
-		return getSongForEvent(EVENT_GENERIC);
 	}
 	
 	public static String getSongName(String song) {
