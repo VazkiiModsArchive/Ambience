@@ -43,7 +43,7 @@ public class PlayerThread extends Thread {
 	
 	public PlayerThread() {
 		setDaemon(true);
-		setName("mineTunes Player Thread");
+		setName("Ambience Player Thread");
 		start();
 	}
 
