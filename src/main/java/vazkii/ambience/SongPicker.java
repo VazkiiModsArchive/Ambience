@@ -60,10 +60,11 @@ public final class SongPicker {
 	public static String getSong() {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayer player = mc.thePlayer;
-		if(player == null)
+		World world = mc.theWorld;
+
+		if(player == null || world == null)
 			return getSongForEvent(EVENT_MAIN_MENU);
 		
-		World world = mc.theWorld;
 		int x = MathHelper.floor_double(player.posX);
 		int y = MathHelper.floor_double(player.posY);
 		int z = MathHelper.floor_double(player.posZ);
