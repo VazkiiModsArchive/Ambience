@@ -58,6 +58,9 @@ public class PlayerThread extends Thread {
 					if(player != null)
 						resetPlayer();
 					InputStream stream = SongLoader.getStream();
+					if(stream == null)
+						continue;
+					
 					player = new AdvancedPlayer(stream);
 					queued = false;
 				}
