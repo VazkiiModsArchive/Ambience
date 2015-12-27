@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.sound.PlayBackgroundMusicEvent;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -116,6 +117,12 @@ public class Ambience {
 			String name = "Next Song: " + SongPicker.getSongName(nextSong);
 			event.right.add(name);
 		}
+	}
+	
+	@SubscribeEvent
+	public void onBackgroundMusic(PlayBackgroundMusicEvent event) {
+		if(SongLoader.enabled)
+			event.setCanceled(true);
 	}
 	
 	public void changeSongTo(String song) {
