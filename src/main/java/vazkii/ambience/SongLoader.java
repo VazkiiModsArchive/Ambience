@@ -91,7 +91,7 @@ public final class SongLoader {
 	}
 	
 	public static InputStream getStream() {
-		if(PlayerThread.currentSong == null)
+		if(PlayerThread.currentSong == null || PlayerThread.currentSong.equals("null.mp3"))
 			return null;
 		
 		File f = new File(mainDir, PlayerThread.currentSong + ".mp3");
