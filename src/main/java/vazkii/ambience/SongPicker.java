@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntityVillager;
@@ -29,6 +30,9 @@ public final class SongPicker {
 
 	public static final String EVENT_MAIN_MENU = "mainMenu";
 	public static final String EVENT_BOSS = "boss";
+	public static final String EVENT_IN_NETHER = "nether";
+	public static final String EVENT_IN_END = "end";
+	public static final String EVENT_HORDE = "horde";
 	public static final String EVENT_NIGHT = "night";
 	public static final String EVENT_RAIN = "rain";
 	public static final String EVENT_UNDERWATER = "underwater";
@@ -87,6 +91,13 @@ public final class SongPicker {
         	if(song != null)
         		return song;
         }
+
+	        int monsterCount = world.getEntitiesWithinAABB(EntityMob.class, AxisAlignedBB.getBoundingBox(player.posX - 16, player.posY - 8, player.posZ - 16, player.posX + 16, player.posY + 8, player.posZ + 16)).size();
+		if(monsterCount > 5) {
+        	String song = getSongForEvent(EVENT_HORDE);
+        	if(song != null)
+        		return song;
+		}
         
         if(player.fishEntity != null) {
         	String song = getSongForEvent(EVENT_FISHING);
@@ -100,7 +111,18 @@ public final class SongPicker {
         	if(song != null)
         		return song;
         }
-        
+        	int indimension = world.provider.dimensionId;
+
+		if(indimension == -1) {
+		String song = getSongForEvent(EVENT_IN_NETHER);
+	        	if(song != null)
+	        	return song;
+		} else if(indimension == 1) {
+			String song = getSongForEvent(EVENT_IN_END);
+	        	if(song != null)
+	        	return song;
+		}
+
 		Entity riding = player.ridingEntity;
 		if(riding != null) {
 			if(riding instanceof EntityMinecart) {
@@ -138,12 +160,14 @@ public final class SongPicker {
 	        	if(song != null)
 	        		return song;
 	        }
-			if(y < 50) {
+			if(y < 55) {
 	        	String song = getSongForEvent(EVENT_UNDERGROUND);
 	        	if(song != null)
 	        		return song;
 	        }
-		} else if(world.isRaining()) {
+		}  
+
+		if(world.isRaining()) {
         	String song = getSongForEvent(EVENT_RAIN);
         	if(song != null)
         		return song;
@@ -156,7 +180,7 @@ public final class SongPicker {
         }
 		
 		long time = world.getWorldTime() % 24000;
-		if(time > 13600) {
+		if(time > 13300 && time < 23200) {
         	String song = getSongForEvent(EVENT_NIGHT);
         	if(song != null)
         		return song;
@@ -168,6 +192,8 @@ public final class SongPicker {
         	if(song != null)
         		return song;
 		}
+
+
 		
 		event = new AmbienceEventEvent.Post(world, x, y, z);
 		MinecraftForge.EVENT_BUS.post(event);
