@@ -32,9 +32,9 @@ import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import vazkii.ambience.PlayerThread;
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
+import vazkii.ambience.PlayerThread;
 
 /**
  * The <code>JavaSoundAudioDevice</code> implements an audio

@@ -11,12 +11,11 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
 
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.BiomeDictionary;
-
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.common.FMLLog;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.common.FMLLog;
 
 public final class SongLoader {
 

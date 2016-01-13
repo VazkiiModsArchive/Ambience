@@ -18,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -69,11 +70,9 @@ public final class SongPicker {
 		if(player == null || world == null)
 			return getSongForEvent(EVENT_MAIN_MENU);
 		
-		int x = MathHelper.floor_double(player.posX);
-		int y = MathHelper.floor_double(player.posY);
-		int z = MathHelper.floor_double(player.posZ);
-		
-		AmbienceEventEvent event = new AmbienceEventEvent.Pre(world, x, y, z);
+		BlockPos pos = new BlockPos(player);
+
+		AmbienceEventEvent event = new AmbienceEventEvent.Pre(world, pos);
 		MinecraftForge.EVENT_BUS.post(event);
     	String eventr = getSongForEvent(event.event);
     	if(eventr != null)
@@ -92,7 +91,7 @@ public final class SongPicker {
         		return song;
         }
 
-	        int monsterCount = world.getEntitiesWithinAABB(EntityMob.class, AxisAlignedBB.getBoundingBox(player.posX - 16, player.posY - 8, player.posZ - 16, player.posX + 16, player.posY + 8, player.posZ + 16)).size();
+	        int monsterCount = world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(player.posX - 16, player.posY - 8, player.posZ - 16, player.posX + 16, player.posY + 8, player.posZ + 16)).size();
 		if(monsterCount > 5) {
         	String song = getSongForEvent(EVENT_HORDE);
         	if(song != null)
@@ -111,7 +110,7 @@ public final class SongPicker {
         	if(song != null)
         		return song;
         }
-        	int indimension = world.provider.dimensionId;
+        	int indimension = world.provider.getDimensionId();
 
 		if(indimension == -1) {
 		String song = getSongForEvent(EVENT_IN_NETHER);
@@ -153,27 +152,26 @@ public final class SongPicker {
         		return song;
 		}
 		
-		boolean underground = !world.canBlockSeeTheSky(x, y, z); 
+		boolean underground = !world.canSeeSky(pos);
+		
 		if(underground) {
-			if(y < 20) {
+			if(pos.getY() < 20) {
 	        	String song = getSongForEvent(EVENT_DEEP_UNDEGROUND);
 	        	if(song != null)
 	        		return song;
 	        }
-			if(y < 55) {
+			if(pos.getY() < 55) {
 	        	String song = getSongForEvent(EVENT_UNDERGROUND);
 	        	if(song != null)
 	        		return song;
 	        }
-		}  
-
-		if(world.isRaining()) {
+		} else if(world.isRaining()) {
         	String song = getSongForEvent(EVENT_RAIN);
         	if(song != null)
         		return song;
 		}
 		
-		if(y > 128) {
+		if(pos.getY() > 128) {
         	String song = getSongForEvent(EVENT_HIGH_UP);
         	if(song != null)
         		return song;
@@ -186,7 +184,7 @@ public final class SongPicker {
         		return song;
         }
 		
-		int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, AxisAlignedBB.getBoundingBox(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
+		int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
 		if(villagerCount > 3) {
         	String song = getSongForEvent(EVENT_VILLAGE);
         	if(song != null)
@@ -195,15 +193,15 @@ public final class SongPicker {
 
 
 		
-		event = new AmbienceEventEvent.Post(world, x, y, z);
+		event = new AmbienceEventEvent.Post(world, pos);
 		MinecraftForge.EVENT_BUS.post(event);
     	eventr = getSongForEvent(event.event);
     	if(eventr != null)
     		return eventr;
 		
-        if(world != null && world.blockExists(x, y, z)) {
-            Chunk chunk = world.getChunkFromBlockCoords(x, z);
-            BiomeGenBase biome = chunk.getBiomeGenForWorldCoords(x & 15, z & 15, world.getWorldChunkManager());
+        if(world != null) {
+            Chunk chunk = world.getChunkFromBlockCoords(pos);
+            BiomeGenBase biome = chunk.getBiome(pos, world.getWorldChunkManager());
             if(biomeMap.containsKey(biome))
             	return biomeMap.get(biome);
             

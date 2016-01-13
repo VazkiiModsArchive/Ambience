@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
 
@@ -22,8 +22,9 @@ repositories {
     }
 }
 
-apply plugin: 'forge'
-//apply plugin: 'curseforge'
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
 
 ext.configFile = file('build.properties')
 
@@ -31,12 +32,13 @@ ext.config = parseConfig(configFile)
 //ext.priv = parseConfig(file('private.properties'))
 
 version = "${config.version}-${config.build_number}"
-group = "vazkii.runetune" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "vazkii.ambience" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
 
 minecraft {
     version = "${config.mc_version}-${config.forge_version}"
-    assetDir = "eclipse/assets"
+    runDir = "eclipse/assets"
+    mappings = "snapshot_20151230"
 
     //This, does the token replacement.
     //Though, I reccomend this to be replaced with a token such as @VERSION@
@@ -74,7 +76,7 @@ processResources {
  */
 task deobfJar(type: Jar) {
     from(sourceSets.main.output)
-	archiveName = "${baseName} ${version}-deobf.${extension}"
+    archiveName = "${baseName} ${version}-deobf.${extension}"
 }
 
 artifacts {
@@ -83,7 +85,7 @@ artifacts {
 /**
  * Increments the buildnumber in your config file, and saves it
  */
-task incrementBuildNumber(dependsOn: 'reobf') << {
+task incrementBuildNumber {
     config.build_number = (config.build_number.toString().toInteger()) + 1
     configFile.withWriter {
         config.toProperties().store(it, "")
@@ -101,33 +103,33 @@ task wtfGradle2(type: Copy) {
 
 // Seriously, I'm desperate to make this work
 task wtfGradle1(type: Delete) {
-	dependsOn "wtfGradle2"
+    dependsOn "wtfGradle2"
     delete "${config.dir_output}/wtf/${deobfJar.archiveName}"
 }
 
 task output(type: Copy) {
-	dependsOn "wtfGradle1"
-	from(jar.destinationDir)
+    dependsOn "wtfGradle1"
+    from(jar.destinationDir)
     into file(config.dir_output)
 }
 
 task outputDeobf(type: Copy) {
-	dependsOn "output"
-	from(config.dir_output) {
-		include deobfJar.archiveName
-	}
+    dependsOn "output"
+    from(config.dir_output) {
+        include deobfJar.archiveName
+    }
     into file("${config.dir_output}/deobf")
 }
 
 /*task forgecraft(type: Copy) {
-	dependsOn "outputDeobf"
-	from "${config.dir_output}/wtf"
-	into file(config.dir_forgecraft)
+    dependsOn "outputDeobf"
+    from "${config.dir_output}/wtf"
+    into file(config.dir_forgecraft)
 }*/
 
 task sort(type: Delete) {
-	dependsOn /*"forgecraft"*/ "outputDeobf"
-	delete "${config.dir_output}/${deobfJar.archiveName}", "${config.dir_output}/wtf"
+    dependsOn /*"forgecraft"*/ "outputDeobf"
+    delete "${config.dir_output}/${deobfJar.archiveName}", "${config.dir_output}/wtf"
 }
 
 /**
@@ -138,8 +140,8 @@ task sort(type: Delete) {
     ftp(action: 'send', remotedir: '/files') {
         fileset(file: jar.archivePath)
     }
-	
-	 ftp(action: 'send', remotedir: '/files/deobf') {
+    
+     ftp(action: 'send', remotedir: '/files/deobf') {
         fileset(file: deobfJar.archivePath)
     }
 
@@ -195,7 +197,7 @@ jar {
     apiKey = priv.cfkey
     projectId = "225643"
     changelog = """
-		See http://vazkii.us/mod/Botania/changelog.php#${version}
+        See http://vazkii.us/mod/Botania/changelog.php#${version}
     """
     releaseType = "release"
 }*/
