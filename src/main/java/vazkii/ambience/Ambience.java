@@ -4,9 +4,9 @@ import java.io.File;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.sound.PlayBackgroundMusicEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +30,9 @@ public class Ambience {
 	private static final int WAIT_DURATION = 40;
 	public static final int FADE_DURATION = 40;
 	public static final int SILENCE_DURATION = 20;
+
+	public static final String[] OBF_MC_MUSIC_TICKER = { "aM", "field_147126_aw", "mcMusicTicker" };
+	public static final String[] OBF_MAP_BOSS_INFOS = { "g", "field_184060_g", "mapBossInfos" };
 
 	public static PlayerThread thread;
 	
@@ -59,7 +62,7 @@ public class Ambience {
 	public void init(FMLInitializationEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		MusicTicker ticker = new NilMusicTicker(mc);
-		ReflectionHelper.setPrivateValue(Minecraft.class, mc, ticker, "mcMusicTicker", "field_147126_aw", "ax");
+		ReflectionHelper.setPrivateValue(Minecraft.class, mc, ticker, OBF_MC_MUSIC_TICKER);
 	}
 	
 	@SubscribeEvent
@@ -108,29 +111,25 @@ public class Ambience {
 		if(!Minecraft.getMinecraft().gameSettings.showDebugInfo)
 			return;
 		
-		event.right.add(null);
+		event.getRight().add(null);
 		if(PlayerThread.currentSong != null) {
 			String name = "Now Playing: " + SongPicker.getSongName(PlayerThread.currentSong);
-			event.right.add(name);
+			event.getRight().add(name);
 		}
 		if(nextSong != null) {
 			String name = "Next Song: " + SongPicker.getSongName(nextSong);
-			event.right.add(name);
+			event.getRight().add(name);
 		}
 	}
 	
 	@SubscribeEvent
-	public void onBackgroundMusic(PlayBackgroundMusicEvent event) {
-		if(SongLoader.enabled)
+	public void onBackgroundMusic(PlaySoundEvent event) {
+		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC)
 			event.setCanceled(true);
 	}
 	
 	public void changeSongTo(String song) {
 		thread.play(song);
-	}
-	
-	public static BiomeGenBase getMutation(BiomeGenBase biome) {
-		return BiomeGenBase.getBiome(biome.biomeID + 128);
 	}
 	
 }

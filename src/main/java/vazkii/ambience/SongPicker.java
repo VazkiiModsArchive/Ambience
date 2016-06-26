@@ -3,10 +3,14 @@ package vazkii.ambience;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.ReferralException;
+
+import com.google.common.reflect.Reflection;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiBossOverlay;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.monster.EntityMob;
@@ -15,16 +19,18 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.common.MinecraftForge;
 
 public final class SongPicker {
@@ -51,7 +57,7 @@ public final class SongPicker {
 	public static final String EVENT_GENERIC = "generic";
 	
 	public static final Map<String, String> eventMap = new HashMap();
-	public static final Map<BiomeGenBase, String> biomeMap = new HashMap();
+	public static final Map<Biome, String> biomeMap = new HashMap();
 	public static final Map<BiomeDictionary.Type, String> primaryTagMap = new HashMap();
 	public static final Map<BiomeDictionary.Type, String> secondaryTagMap = new HashMap();
 	
@@ -78,7 +84,9 @@ public final class SongPicker {
     	if(eventr != null)
     		return eventr;
 		
-        if(BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
+    	GuiBossOverlay bossOverlay = mc.ingameGUI.getBossOverlay();
+    	Map map = ReflectionHelper.getPrivateValue(GuiBossOverlay.class, bossOverlay, Ambience.OBF_MAP_BOSS_INFOS);
+        if(!map.isEmpty()) {
         	String song = getSongForEvent(EVENT_BOSS);
         	if(song != null)
         		return song;
@@ -104,13 +112,13 @@ public final class SongPicker {
         		return song;
         }
         
-        ItemStack headItem = player.getEquipmentInSlot(4);
-        if(headItem != null && headItem.getItem() == Item.getItemFromBlock(Blocks.pumpkin)) {
+        ItemStack headItem = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+        if(headItem != null && headItem.getItem() == Item.getItemFromBlock(Blocks.PUMPKIN)) {
         	String song = getSongForEvent(EVENT_PUMPKIN_HEAD);
         	if(song != null)
         		return song;
         }
-        	int indimension = world.provider.getDimensionId();
+        	int indimension = world.provider.getDimension();
 
 		if(indimension == -1) {
 		String song = getSongForEvent(EVENT_IN_NETHER);
@@ -122,7 +130,7 @@ public final class SongPicker {
 	        	return song;
 		}
 
-		Entity riding = player.ridingEntity;
+		Entity riding = player.getRidingEntity();
 		if(riding != null) {
 			if(riding instanceof EntityMinecart) {
 	        	String song = getSongForEvent(EVENT_MINECART);
@@ -146,7 +154,7 @@ public final class SongPicker {
 	        }
 		}
 		
-		if(player.isInsideOfMaterial(Material.water)) {
+		if(player.isInsideOfMaterial(Material.WATER)) {
         	String song = getSongForEvent(EVENT_UNDERWATER);
         	if(song != null)
         		return song;
@@ -201,7 +209,7 @@ public final class SongPicker {
 		
         if(world != null) {
             Chunk chunk = world.getChunkFromBlockCoords(pos);
-            BiomeGenBase biome = chunk.getBiome(pos, world.getWorldChunkManager());
+            Biome biome = chunk.getBiome(pos, world.getBiomeProvider());
             if(biomeMap.containsKey(biome))
             	return biomeMap.get(biome);
             

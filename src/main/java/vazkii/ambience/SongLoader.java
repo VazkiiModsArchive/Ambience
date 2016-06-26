@@ -1,4 +1,4 @@
-package vazkii.ambience;
+	package vazkii.ambience;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -43,13 +43,13 @@ public final class SongLoader {
 						continue;
 
 					String keyType = tokens[0];
-					if(keyType.equals("event")) {
+					if(keyType.equals("event")) {	
 						String event = tokens[1];
 						
 						SongPicker.eventMap.put(event, props.getProperty(s));
 					} else if(keyType.equals("biome")) {
 						String biomeName = joinTokensExceptFirst(tokens).replaceAll("\\+", " ");
-						BiomeGenBase biome = BiomeMapper.getBiome(biomeName);
+						Biome biome = BiomeMapper.getBiome(biomeName);
 						
 						if(biome != null)
 							SongPicker.biomeMap.put(biome, props.getProperty(s));
@@ -94,6 +94,9 @@ public final class SongLoader {
 			return null;
 		
 		File f = new File(mainDir, PlayerThread.currentSong + ".mp3");
+		if(f.getName().equals("null.np3"))
+			return null;
+		
 		try {
 			return new FileInputStream(f);
 		} catch (FileNotFoundException e) {

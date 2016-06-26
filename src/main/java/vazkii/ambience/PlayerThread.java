@@ -2,12 +2,12 @@ package vazkii.ambience;
 
 import java.io.InputStream;
 
-import javazoom.jl.player.AudioDevice;
-import javazoom.jl.player.JavaSoundAudioDevice;
-import javazoom.jl.player.advanced.AdvancedPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.util.SoundCategory;
+import vazkii.ambience.thirdparty.javazoom.jl.player.AudioDevice;
+import vazkii.ambience.thirdparty.javazoom.jl.player.JavaSoundAudioDevice;
+import vazkii.ambience.thirdparty.javazoom.jl.player.advanced.AdvancedPlayer;
 
 public class PlayerThread extends Thread {
 
