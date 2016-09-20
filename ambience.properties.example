@@ -1,5 +1,9 @@
 # Ambience Config
 
+# You may specify multiple songs for a single event using a comma as a separator
+# e.g. event.underground=Song1,Song2,Song3,Song4
+# NOTE: Make sure you are not using any song names that contain the exact name of another song name as this will cause conflicts
+
 enabled=true
 
 # === Events - Highest Priority
