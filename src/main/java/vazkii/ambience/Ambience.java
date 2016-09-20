@@ -83,8 +83,7 @@ public class Ambience {
 			} else
 				song = nextSong;
 			
-			if((!songs.equals(PlayerThread.currentSongChoices)) || (song == null && PlayerThread.currentSong != null)
-				|| (song != null && !song.equals(PlayerThread.currentSong))) {
+			if((!songs.equals(PlayerThread.currentSongChoices)) || (song == null && PlayerThread.currentSong != null)) {
 				if(nextSong != null && nextSong.equals(song))
 					waitTick--;
 				
