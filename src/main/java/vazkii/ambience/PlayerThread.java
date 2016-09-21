@@ -95,6 +95,7 @@ public class PlayerThread extends Thread {
 		if(player != null)
 			player.close();
 
+		currentSong = null;
 		player = null;
 	}
 

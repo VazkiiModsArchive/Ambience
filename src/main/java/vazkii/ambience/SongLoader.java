@@ -94,7 +94,7 @@ public final class SongLoader {
 			return null;
 		
 		File f = new File(mainDir, PlayerThread.currentSong + ".mp3");
-		if(f.getName().equals("null.np3"))
+		if(f.getName().equals("null.mp3"))
 			return null;
 		
 		try {
