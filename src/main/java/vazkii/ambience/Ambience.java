@@ -78,16 +78,18 @@ public class Ambience {
 		
 		if(event.phase == Phase.END) {
 			String songs = SongPicker.getSongsString();
-			String song;
+			String song = null;
 			
-			if(nextSong == null || !songs.contains(nextSong)) {
-				do {
-					song = SongPicker.getRandomSong();
-				} while(song.equals(currentSong) && songs.contains(","));
-			} else
-				song = nextSong;
+			if(songs != null) {
+				if(nextSong == null || !songs.contains(nextSong)) {
+					do {
+						song = SongPicker.getRandomSong();
+					} while(song.equals(currentSong) && songs.contains(","));
+				} else
+					song = nextSong;
+			}
 			
-			if((!songs.equals(PlayerThread.currentSongChoices)) || (song == null && PlayerThread.currentSong != null) || !thread.playing) {
+			if(songs != null && (!songs.equals(PlayerThread.currentSongChoices) || (song == null && PlayerThread.currentSong != null) || !thread.playing)) {
 				if(nextSong != null && nextSong.equals(song))
 					waitTick--;
 				
