@@ -1,6 +1,7 @@
 package vazkii.ambience;
 
 import java.io.File;
+import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
@@ -36,6 +37,7 @@ public class Ambience {
 
 	public static PlayerThread thread;
 	
+	String currentSong;
 	String nextSong;
 	int waitTick = WAIT_DURATION;
 	int fadeOutTicks = FADE_DURATION;
@@ -44,6 +46,8 @@ public class Ambience {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
+
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 		
@@ -60,6 +64,8 @@ public class Ambience {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
+
 		Minecraft mc = Minecraft.getMinecraft();
 		MusicTicker ticker = new NilMusicTicker(mc);
 		ReflectionHelper.setPrivateValue(Minecraft.class, mc, ticker, OBF_MC_MUSIC_TICKER);
@@ -71,22 +77,48 @@ public class Ambience {
 			return;
 		
 		if(event.phase == Phase.END) {
-			String song = SongPicker.getSong();
-			if((song == null && PlayerThread.currentSong != null) || (song != null && !song.equals(PlayerThread.currentSong))) {
+			String songs = SongPicker.getSongsString();
+			String song = null;
+			
+			if(songs != null) {
+				if(nextSong == null || !songs.contains(nextSong)) {
+					do {
+						song = SongPicker.getRandomSong();
+					} while(song.equals(currentSong) && songs.contains(","));
+				} else
+					song = nextSong;
+			}
+			
+			if(songs != null && (!songs.equals(PlayerThread.currentSongChoices) || (song == null && PlayerThread.currentSong != null) || !thread.playing)) {
 				if(nextSong != null && nextSong.equals(song))
 					waitTick--;
-				nextSong = song;
+				
+				if (!song.equals(currentSong)) {
+					if (currentSong != null && PlayerThread.currentSong != null && !PlayerThread.currentSong.equals(song) && songs.equals(PlayerThread.currentSongChoices))
+						currentSong = PlayerThread.currentSong;
+					else
+						nextSong = song;
+				} else if (nextSong != null && !songs.contains(nextSong))
+					nextSong = null;
 				
 				if(waitTick <= 0) {
-					if(fadeOutTicks < FADE_DURATION) {
+					if(PlayerThread.currentSong == null) {
+						currentSong = nextSong;
+						nextSong = null;
+						PlayerThread.currentSongChoices = songs;
+						changeSongTo(song);
+						fadeOutTicks = 0;
+						waitTick = WAIT_DURATION;
+					} else if(fadeOutTicks < FADE_DURATION) {
 						thread.setGain(PlayerThread.fadeGains[fadeOutTicks]);
 						fadeOutTicks++;
 						silenceTicks = 0;
 					} else {
-						nextSong = null;
 						if(silenceTicks < SILENCE_DURATION) {
 							silenceTicks++;
 						} else {
+							nextSong = null;
+							PlayerThread.currentSongChoices = songs;
 							changeSongTo(song);
 							fadeOutTicks = 0;
 							waitTick = WAIT_DURATION;
@@ -129,6 +161,7 @@ public class Ambience {
 	}
 	
 	public void changeSongTo(String song) {
+		currentSong = song;
 		thread.play(song);
 	}
 	

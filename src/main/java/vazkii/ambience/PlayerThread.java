@@ -28,6 +28,7 @@ public class PlayerThread extends Thread {
 	public volatile static float realGain = 0;
 
 	public volatile static String currentSong = null;
+	public volatile static String currentSongChoices = null;
 	
 	AdvancedPlayer player;
 
@@ -74,7 +75,19 @@ public class PlayerThread extends Thread {
 	}
 
 	public void next() {
-		play(currentSong);
+		if (!currentSongChoices.contains(","))
+			play(currentSong);
+		else {
+			if (SongPicker.getSongsString().equals(currentSongChoices)) {
+				String newSong;
+				do {
+					newSong = SongPicker.getRandomSong();
+				} while (newSong.equals(currentSong));
+				play(newSong);
+			} else {
+				play(null);
+			}
+		}
 	}
 	
 	public void resetPlayer() {
@@ -82,6 +95,7 @@ public class PlayerThread extends Thread {
 		if(player != null)
 			player.close();
 
+		currentSong = null;
 		player = null;
 	}
 
