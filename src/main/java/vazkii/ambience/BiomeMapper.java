@@ -23,7 +23,7 @@ public class BiomeMapper {
 		});
 		
 		for(BiomeDictionary.Type t : BiomeDictionary.Type.class.getEnumConstants())
-			typeMap.put(t.name(), t);
+			typeMap.put(t.getName(), t);
 	}
 	
 	public static Biome getBiome(String s) {

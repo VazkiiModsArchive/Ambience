@@ -3,12 +3,9 @@ package vazkii.ambience;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import javax.naming.ReferralException;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.reflect.Reflection;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -30,11 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public final class SongPicker {
 
@@ -75,8 +71,8 @@ public final class SongPicker {
 	
 	public static String[] getSongs() {
 		Minecraft mc = Minecraft.getMinecraft();
-		EntityPlayer player = mc.thePlayer;
-		World world = mc.theWorld;
+		EntityPlayer player = mc.player;
+		World world = mc.world;
 
 		if(player == null || world == null)
 			return getSongsForEvent(EVENT_MAIN_MENU);
@@ -218,7 +214,7 @@ public final class SongPicker {
             if(biomeMap.containsKey(biome))
             	return biomeMap.get(biome);
             
-            BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+            Set<BiomeDictionary.Type> types = BiomeDictionary.getTypes(biome);
             for(Type t : types)
             	if(primaryTagMap.containsKey(t))
             		return primaryTagMap.get(t);
@@ -245,10 +241,6 @@ public final class SongPicker {
 			return eventMap.get(event);
 		
 		return null;
-	}
-	
-	public static void getSongForBiome(World world, int x, int y, int z) {
-		
 	}
 	
 	public static String getSongName(String song) {
