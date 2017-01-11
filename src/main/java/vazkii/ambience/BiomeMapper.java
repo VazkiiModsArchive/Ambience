@@ -15,11 +15,10 @@ public class BiomeMapper {
 	public static void applyMappings() {
 		biomeMap = new HashMap<String, Biome>();
 		typeMap = new HashMap<String, BiomeDictionary.Type>();
-		 for (ResourceLocation biomeResource : Biome.REGISTRY.getKeys())
-			         {
-			             Biome biome = Biome.REGISTRY.getObject(biomeResource);
-			             biomeMap.put(biome.getBiomeName(), biome);
-			         }
+		for (ResourceLocation biomeResource : Biome.REGISTRY.getKeys()){
+			Biome biome = Biome.REGISTRY.getObject(biomeResource);
+			biomeMap.put(biome.getBiomeName(), biome);
+		}
 	}
 	
 	public static Biome getBiome(String s) {
