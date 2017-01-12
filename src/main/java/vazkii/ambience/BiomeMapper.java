@@ -8,14 +8,12 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class BiomeMapper {
-
+	
 	private static Map<String, Biome> biomeMap = null;
-	private static Map<String, BiomeDictionary.Type> typeMap = null;
 	
 	public static void applyMappings() {
 		biomeMap = new HashMap<String, Biome>();
-		typeMap = new HashMap<String, BiomeDictionary.Type>();
-		for (ResourceLocation biomeResource : Biome.REGISTRY.getKeys()){
+		for(ResourceLocation biomeResource : Biome.REGISTRY.getKeys()) {
 			Biome biome = Biome.REGISTRY.getObject(biomeResource);
 			biomeMap.put(biome.getBiomeName(), biome);
 		}
