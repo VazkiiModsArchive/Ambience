@@ -156,11 +156,12 @@ public class Ambience {
 	
 	@SubscribeEvent
 	public void onBackgroundMusic(PlaySoundEvent event) {
-		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC)
-		if (event.isCancelable()){
-			event.setCanceled(true);
-		} else {
-			event.setResultSound(null);
+		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC) {
+			if(event.isCancelable()) {
+				event.setCanceled(true);
+			} else {
+				event.setResultSound(null);
+			}		
 		}
 	}
 	
