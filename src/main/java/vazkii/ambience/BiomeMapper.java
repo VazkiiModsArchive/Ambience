@@ -2,28 +2,21 @@ package vazkii.ambience;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.init.Biomes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class BiomeMapper {
-
+	
 	private static Map<String, Biome> biomeMap = null;
-	private static Map<String, BiomeDictionary.Type> typeMap = null;
 	
 	public static void applyMappings() {
 		biomeMap = new HashMap<String, Biome>();
-		typeMap = new HashMap<String, BiomeDictionary.Type>();
-		
-		
-		Biome.REGISTRY.forEach((Biome biome) -> {
-			if(biome != null)
-				biomeMap.put(biome.getBiomeName(), biome);
-		});
-		
-		for(BiomeDictionary.Type t : BiomeDictionary.Type.class.getEnumConstants())
-			typeMap.put(t.getName(), t);
+		for(ResourceLocation biomeResource : Biome.REGISTRY.getKeys()) {
+			Biome biome = Biome.REGISTRY.getObject(biomeResource);
+			biomeMap.put(biome.getBiomeName(), biome);
+		}
 	}
 	
 	public static Biome getBiome(String s) {
@@ -32,10 +25,8 @@ public class BiomeMapper {
 		return biomeMap.get(s);
 	}
 	
-	public static BiomeDictionary.Type getBiomeType(String s) {
-		if(typeMap == null)
-			applyMappings();
-		return typeMap.get(s);
+	public static Type getBiomeType(String s) {
+		return BiomeDictionary.Type.getType(s);
 	}
 	
 }

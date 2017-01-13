@@ -1,6 +1,6 @@
 [
 {
-  "modid": "Ambience",
+  "modid": "ambience",
   "name": "Ambience",
   "description": "Your soundtracks music in minecraft",
   "version": "${version}",

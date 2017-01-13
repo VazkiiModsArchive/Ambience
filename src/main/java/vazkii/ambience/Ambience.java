@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 @Mod(modid = Ambience.MOD_ID, name = Ambience.MOD_NAME, version = Ambience.VERSION, dependencies = Ambience.DEPENDENCIES)
 public class Ambience {
 
-	public static final String MOD_ID = "Ambience";
+	public static final String MOD_ID = "ambience";
 	public static final String MOD_NAME = MOD_ID;
 	public static final String BUILD = "GRADLE:BUILD";
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
@@ -156,8 +156,13 @@ public class Ambience {
 	
 	@SubscribeEvent
 	public void onBackgroundMusic(PlaySoundEvent event) {
-		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC)
-			event.setCanceled(true);
+		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC) {
+			if(event.isCancelable()) {
+				event.setCanceled(true);
+			} else {
+				event.setResultSound(null);
+			}		
+		}
 	}
 	
 	public void changeSongTo(String song) {
