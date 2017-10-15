@@ -137,8 +137,11 @@ public class PlayerThread extends Thread {
 		this.realGain = realGain;
 		if(player != null) {
 			AudioDevice device = player.getAudioDevice();
-			if(device != null && device instanceof JavaSoundAudioDevice)
-				((JavaSoundAudioDevice) device).setGain(realGain);
+			if(device != null && device instanceof JavaSoundAudioDevice) {
+				try {
+					((JavaSoundAudioDevice) device).setGain(realGain);
+				} catch(IllegalArgumentException e) { } // If you can't fix the bug just put a catch around it
+			}
 		}
 		
 		if(musicGain == 0)
