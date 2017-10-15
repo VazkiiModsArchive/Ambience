@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiBossOverlay;
+import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
@@ -53,6 +54,7 @@ public final class SongPicker {
 	public static final String EVENT_FISHING = "fishing";
 	public static final String EVENT_DYING = "dying";
 	public static final String EVENT_PUMPKIN_HEAD = "pumpkinHead";
+	public static final String EVENT_CREDITS = "credits";
 	public static final String EVENT_GENERIC = "generic";
 	
 	public static final Map<String, String[]> eventMap = new HashMap();
@@ -76,6 +78,9 @@ public final class SongPicker {
 
 		if(player == null || world == null)
 			return getSongsForEvent(EVENT_MAIN_MENU);
+		
+		if(mc.ingameGUI instanceof GuiWinGame)
+			return getSongsForEvent(EVENT_CREDITS);
 		
 		BlockPos pos = new BlockPos(player);
 
