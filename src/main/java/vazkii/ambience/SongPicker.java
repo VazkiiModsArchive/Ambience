@@ -79,7 +79,7 @@ public final class SongPicker {
 		if(player == null || world == null)
 			return getSongsForEvent(EVENT_MAIN_MENU);
 		
-		if(mc.ingameGUI instanceof GuiWinGame)
+		if(mc.currentScreen instanceof GuiWinGame)
 			return getSongsForEvent(EVENT_CREDITS);
 		
 		BlockPos pos = new BlockPos(player);
