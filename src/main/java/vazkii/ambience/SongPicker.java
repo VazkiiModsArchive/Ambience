@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.GuiBossOverlay;
 import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.entity.Entity;
@@ -25,6 +27,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -37,6 +43,8 @@ public final class SongPicker {
 
 	public static final String EVENT_MAIN_MENU = "mainMenu";
 	public static final String EVENT_BOSS = "boss";
+	public static final String EVENT_BOSS_WITHER = "bossWither";
+	public static final String EVENT_BOSS_DRAGON = "bossDragon";
 	public static final String EVENT_IN_NETHER = "nether";
 	public static final String EVENT_IN_END = "end";
 	public static final String EVENT_HORDE = "horde";
@@ -92,8 +100,34 @@ public final class SongPicker {
     		return eventr;
 		
     	GuiBossOverlay bossOverlay = mc.ingameGUI.getBossOverlay();
-    	Map map = ReflectionHelper.getPrivateValue(GuiBossOverlay.class, bossOverlay, Ambience.OBF_MAP_BOSS_INFOS);
+    	Map<UUID, BossInfoClient> map = ReflectionHelper.getPrivateValue(GuiBossOverlay.class, bossOverlay, Ambience.OBF_MAP_BOSS_INFOS);
         if(!map.isEmpty()) {
+        	try {
+            	BossInfoClient first = map.get(map.keySet().iterator().next());
+            	ITextComponent comp = first.getName(); 
+            	String type = "";
+            	
+            	if(comp instanceof TextComponentString) {
+            		type = comp.getStyle().getHoverEvent().getValue().getUnformattedComponentText();
+            		type = type.substring(type.indexOf("type:\"") + 6, type.length() - 2);
+            	} else if(comp instanceof TextComponentTranslation) {
+            		type = ((TextComponentTranslation) comp).getKey();
+            		if(type.startsWith("entity.") && type.endsWith(".name"))
+            			type = type.substring(7, type.length() - 5);
+            	}
+            	
+            	if(type.equals("minecraft:wither")) {
+                 	String[] songs = getSongsForEvent(EVENT_BOSS_WITHER);
+                	if(songs != null)
+                		return songs;
+            	} else if(type.equals("EnderDragon")) {
+                 	String[] songs = getSongsForEvent(EVENT_BOSS_DRAGON);
+                	if(songs != null)
+                		return songs;
+            	}
+        	} catch(NullPointerException e) { 
+        	}
+        	
         	String[] songs = getSongsForEvent(EVENT_BOSS);
         	if(songs != null)
         		return songs;

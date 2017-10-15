@@ -38,6 +38,11 @@ event.generic=AutumnVoyage
 #event.horde=
 #event.nether=
 #event.end=
+#event.bossWither=
+#event.bossDragon=
+
+# You can add songs for custom bosses. If there's a mod that adds a boss with ID
+# GolemBoss for example, you can use event.bossGolemBoss=
 
 # === Events End
 
