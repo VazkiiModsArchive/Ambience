@@ -27,6 +27,10 @@ event.rain=Quest
 event.dying=Forbidden
 event.fishing=SeaShantyI
 event.pumpkinHead=DanceOfDeath
+
+# Note: you MUST have a song attributed to this event to prevent cases where there's 
+# no song to play and a song for an event that no longer applies is still playing.
+# If you don't have a song here you also risk potential crashes.
 event.generic=AutumnVoyage
 
 #event.credits=
