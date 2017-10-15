@@ -33,6 +33,7 @@ event.pumpkinHead=DanceOfDeath
 # If you don't have a song here you also risk potential crashes.
 event.generic=AutumnVoyage
 
+#event.villageNight=
 #event.credits=
 #event.horde=
 #event.nether=

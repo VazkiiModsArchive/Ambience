@@ -47,6 +47,7 @@ public final class SongPicker {
 	public static final String EVENT_DEEP_UNDEGROUND = "deepUnderground";
 	public static final String EVENT_HIGH_UP = "highUp";
 	public static final String EVENT_VILLAGE = "village";
+	public static final String EVENT_VILLAGE_NIGHT = "villageNight";
 	public static final String EVENT_MINECART = "minecart";
 	public static final String EVENT_BOAT = "boat";
 	public static final String EVENT_HORSE = "horse";
@@ -166,6 +167,9 @@ public final class SongPicker {
         		return songs;
 		}
 		
+		long time = world.getWorldTime() % 24000;
+		boolean night = time > 13300 && time < 23200; 
+		
 		if(world.provider.isSurfaceWorld()) {
 			boolean underground = !world.canSeeSky(pos);
 			
@@ -192,8 +196,7 @@ public final class SongPicker {
 	        		return songs;
 	        }
 			
-			long time = world.getWorldTime() % 24000;
-			if(time > 13300 && time < 23200) {
+			if(night) {
 	        	String[] songs = getSongsForEvent(EVENT_NIGHT);
 	        	if(songs != null)
 	        		return songs;
@@ -202,12 +205,16 @@ public final class SongPicker {
 		
 		int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
 		if(villagerCount > 3) {
+			if(night) {
+				String[] songs = getSongsForEvent(EVENT_VILLAGE_NIGHT);
+	        	if(songs != null)
+	        		return songs;
+			}
+			
         	String[] songs = getSongsForEvent(EVENT_VILLAGE);
         	if(songs != null)
         		return songs;
 		}
-
-
 		
 		event = new AmbienceEventEvent.Post(world, pos);
 		MinecraftForge.EVENT_BUS.post(event);
