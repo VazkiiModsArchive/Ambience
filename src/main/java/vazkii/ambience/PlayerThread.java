@@ -11,8 +11,8 @@ import vazkii.ambience.thirdparty.javazoom.jl.player.advanced.AdvancedPlayer;
 
 public class PlayerThread extends Thread {
 
-	public static final float MIN_GAIN = -80F;
-	public static final float MAX_GAIN = -10F;
+	public static final float MIN_GAIN = -50F;
+	public static final float MAX_GAIN = 0F;
 
 	public static float[] fadeGains;
 	
@@ -132,7 +132,8 @@ public class PlayerThread extends Thread {
 	public void setRealGain() {
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		float musicGain = settings.getSoundLevel(SoundCategory.MUSIC) * settings.getSoundLevel(SoundCategory.MASTER);
-		float realGain = Math.max(MIN_GAIN, gain * (2F - musicGain)); 
+		float realGain = MIN_GAIN + (MAX_GAIN - MIN_GAIN) * musicGain;
+		
 		this.realGain = realGain;
 		if(player != null) {
 			AudioDevice device = player.getAudioDevice();

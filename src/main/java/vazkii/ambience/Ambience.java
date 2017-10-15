@@ -32,7 +32,7 @@ public class Ambience {
 	public static final int FADE_DURATION = 40;
 	public static final int SILENCE_DURATION = 20;
 
-	public static final String[] OBF_MC_MUSIC_TICKER = { "aK", "field_147126_aw", "mcMusicTicker" };
+	public static final String[] OBF_MC_MUSIC_TICKER = { "aM", "field_147126_aw", "mcMusicTicker" };
 	public static final String[] OBF_MAP_BOSS_INFOS = { "g", "field_184060_g", "mapBossInfos" };
 
 	public static PlayerThread thread;
@@ -157,11 +157,10 @@ public class Ambience {
 	@SubscribeEvent
 	public void onBackgroundMusic(PlaySoundEvent event) {
 		if(SongLoader.enabled && event.getSound().getCategory() == SoundCategory.MUSIC) {
-			if(event.isCancelable()) {
+			if(event.isCancelable())
 				event.setCanceled(true);
-			} else {
-				event.setResultSound(null);
-			}		
+			
+			event.setResultSound(null);
 		}
 	}
 	
