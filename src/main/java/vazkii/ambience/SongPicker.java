@@ -161,37 +161,39 @@ public final class SongPicker {
         		return songs;
 		}
 		
-		boolean underground = !world.canSeeSky(pos);
-		
-		if(underground) {
-			if(pos.getY() < 20) {
-	        	String[] songs = getSongsForEvent(EVENT_DEEP_UNDEGROUND);
+		if(world.provider.isSurfaceWorld()) {
+			boolean underground = !world.canSeeSky(pos);
+			
+			if(underground) {
+				if(pos.getY() < 20) {
+		        	String[] songs = getSongsForEvent(EVENT_DEEP_UNDEGROUND);
+		        	if(songs != null)
+		        		return songs;
+		        }
+				if(pos.getY() < 55) {
+		        	String[] songs = getSongsForEvent(EVENT_UNDERGROUND);
+		        	if(songs != null)
+		        		return songs;
+		        }
+			} else if(world.isRaining()) {
+	        	String[] songs = getSongsForEvent(EVENT_RAIN);
+	        	if(songs != null)
+	        		return songs;
+			}
+			
+			if(pos.getY() > 128) {
+	        	String[] songs = getSongsForEvent(EVENT_HIGH_UP);
 	        	if(songs != null)
 	        		return songs;
 	        }
-			if(pos.getY() < 55) {
-	        	String[] songs = getSongsForEvent(EVENT_UNDERGROUND);
+			
+			long time = world.getWorldTime() % 24000;
+			if(time > 13300 && time < 23200) {
+	        	String[] songs = getSongsForEvent(EVENT_NIGHT);
 	        	if(songs != null)
 	        		return songs;
 	        }
-		} else if(world.isRaining()) {
-        	String[] songs = getSongsForEvent(EVENT_RAIN);
-        	if(songs != null)
-        		return songs;
 		}
-		
-		if(pos.getY() > 128) {
-        	String[] songs = getSongsForEvent(EVENT_HIGH_UP);
-        	if(songs != null)
-        		return songs;
-        }
-		
-		long time = world.getWorldTime() % 24000;
-		if(time > 13300 && time < 23200) {
-        	String[] songs = getSongsForEvent(EVENT_NIGHT);
-        	if(songs != null)
-        		return songs;
-        }
 		
 		int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
 		if(villagerCount > 3) {
