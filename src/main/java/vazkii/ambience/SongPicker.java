@@ -218,7 +218,9 @@ public final class SongPicker {
 		        	if(songs != null)
 		        		return songs;
 		        }
-			} else if(world.isRaining()) {
+			} 
+			// here "else" is unnecessary.
+			if(world.isRaining()) {
 	        	String[] songs = getSongsForEvent(EVENT_RAIN);
 	        	if(songs != null)
 	        		return songs;
