@@ -1,27 +1,20 @@
 	package vazkii.ambience;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.Set;
+    import net.minecraft.world.biome.Biome;
+    import net.minecraftforge.common.BiomeDictionary;
+    import net.minecraftforge.fml.common.FMLLog;
+    import org.apache.logging.log4j.Level;
 
-import org.apache.logging.log4j.Level;
-
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.common.FMLLog;
+    import java.io.*;
+    import java.util.Properties;
+    import java.util.Set;
 
 public final class SongLoader {
 
 	public static File mainDir;
 	public static boolean enabled = false;
-	
+	public static boolean debug = false;
+
 	public static void loadFrom(File f) {
 		File config = new File(f, "ambience.properties");
 		if(!config.exists())
@@ -31,7 +24,9 @@ public final class SongLoader {
 		try {
 			props.load(new FileReader(config));
 			enabled = props.getProperty("enabled").equals("true");
-			
+			debug = props.getProperty("debug").equals("true");
+
+
 			if(enabled) {
 				SongPicker.reset();
 				Set<Object> keys = props.keySet();

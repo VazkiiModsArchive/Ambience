@@ -1,13 +1,5 @@
 package vazkii.ambience;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.BossInfoClient;
@@ -28,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -38,6 +29,9 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
 
 public final class SongPicker {
 
@@ -72,9 +66,15 @@ public final class SongPicker {
 	public static final Map<BiomeDictionary.Type, String[]> secondaryTagMap = new HashMap();
 	
 	public static final Random rand = new Random();
-	
+
 	public static void reset() {
 		eventMap.clear();
+		biomeMap.clear();
+		primaryTagMap.clear();
+		secondaryTagMap.clear();
+	}
+
+	public static void resetBiomes() {
 		biomeMap.clear();
 		primaryTagMap.clear();
 		secondaryTagMap.clear();
