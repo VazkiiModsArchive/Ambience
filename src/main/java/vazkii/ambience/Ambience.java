@@ -1,8 +1,5 @@
 package vazkii.ambience;
 
-import java.io.File;
-import java.util.Random;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.util.SoundCategory;
@@ -18,6 +15,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
+import java.io.File;
+import java.util.logging.LogManager;
 
 @Mod(modid = Ambience.MOD_ID, name = Ambience.MOD_NAME, version = Ambience.VERSION, dependencies = Ambience.DEPENDENCIES)
 public class Ambience {
@@ -43,6 +43,7 @@ public class Ambience {
 	int fadeOutTicks = FADE_DURATION;
 	int fadeInTicks = 0;
 	int silenceTicks = 0;
+	File ambienceDir;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -50,21 +51,30 @@ public class Ambience {
 
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
-		
+
 		File configDir = event.getSuggestedConfigurationFile().getParentFile();
-		File ambienceDir = new File(configDir.getParentFile(), "ambience_music");
-		if(!ambienceDir.exists())
-			ambienceDir.mkdir();
-		
-		SongLoader.loadFrom(ambienceDir);
-		
-		if(SongLoader.enabled)
-			thread = new PlayerThread();
+		ambienceDir = new File(configDir.getParentFile(), "ambience_music");
+
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
+
+		SongPicker.resetBiomes();
+		BiomeMapper.applyMappings();
+
+		if(!ambienceDir.exists())
+			ambienceDir.mkdir();
+
+		SongLoader.loadFrom(ambienceDir);
+
+		if (SongLoader.debug) LogManager.getLogManager().getLogger(Ambience.MOD_ID).info("Debug log messages enabled. See below.");
+		if (SongLoader.debug) LogManager.getLogManager().getLogger(Ambience.MOD_ID).info("[DEBUG] BIOME LIST: "+BiomeMapper.getBiomes());
+		if (SongLoader.debug) LogManager.getLogManager().getLogger(Ambience.MOD_ID).info("[DEBUG] USED EVENTS LIST: "+SongPicker.eventMap);
+
+		if(SongLoader.enabled)
+			thread = new PlayerThread();
 
 		Minecraft mc = Minecraft.getMinecraft();
 		MusicTicker ticker = new NilMusicTicker(mc);
@@ -75,7 +85,6 @@ public class Ambience {
 	public void onTick(ClientTickEvent event) {
 		if(thread == null)
 			return;
-		
 		if(event.phase == Phase.END) {
 			String songs = SongPicker.getSongsString();
 			String song = null;
